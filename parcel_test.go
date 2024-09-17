@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"github.com/stretchr/testify/assert"
 	"math/rand"
 	"testing"
 	"time"
@@ -134,7 +133,8 @@ func TestGetByClient(t *testing.T) {
 
 	// check
 	for _, parcel := range storedParcels {
-		assert.NotEmpty(t, parcelMap[parcel.Number])
+		_, ok := parcelMap[parcel.Number]
+		require.True(t, ok)
 		require.Equal(t, parcel, parcelMap[parcel.Number])
 		// в parcelMap лежат добавленные посылки, ключ - идентификатор посылки, значение - сама посылка
 		// убедитесь, что все посылки из storedParcels есть в parcelMap
