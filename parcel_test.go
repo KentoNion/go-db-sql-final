@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"github.com/stretchr/testify/assert"
 	"math/rand"
 	"testing"
 	"time"
@@ -72,7 +73,7 @@ func TestSetAddress(t *testing.T) {
 	require.NoError(t, err)                 //проверяем отсутсвие ошибки
 	a, err := store.Get(id)                 //Получаем "новую" посылку из дб с новым адрессом
 	require.NoError(t, err)                 //Проверяем что нет ошибки
-	require.Equal(t, a.Address, newAddress) //Проверяем что адресс изменился
+	require.Equal(t, newAddress, a.Address) //Проверяем что адресс изменился
 }
 
 // TestSetStatus проверяет обновление статуса
@@ -119,7 +120,6 @@ func TestGetByClient(t *testing.T) {
 	for i := 0; i < len(parcels); i++ {
 		id, err := store.Add(parcels[i]) //Добавляем новые посылки в бд
 		require.NoError(t, err)          //Проверяем отсутсвие ошибки
-
 		// обновляем идентификатор добавленной у посылки
 		parcels[i].Number = id
 
@@ -133,10 +133,9 @@ func TestGetByClient(t *testing.T) {
 	require.Equal(t, len(parcels), len(storedParcels)) //проверяем что кол-во полученных посылок = кол-во доставленных посылок
 
 	// check
-	i := 0
 	for _, parcel := range storedParcels {
-		require.Equal(t, parcelMap[parcel.Number], storedParcels[i])
-		i++
+		assert.NotEmpty(t, parcelMap[parcel.Number])
+		require.Equal(t, parcel, parcelMap[parcel.Number])
 		// в parcelMap лежат добавленные посылки, ключ - идентификатор посылки, значение - сама посылка
 		// убедитесь, что все посылки из storedParcels есть в parcelMap
 		// убедитесь, что значения полей полученных посылок заполнены верно
